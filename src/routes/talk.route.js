@@ -5,17 +5,9 @@ const { talkController } = require("../controller");
 
 const router = express.Router();
 
-router.post(
-  "/",
-  [ validate(talkValidation.create)],
-  talkController.createTalk
-);
+router.post("/", [validate(talkValidation.create)], talkController.createTalk);
 
-router.patch(
-  "/:_id",
-  [validate(talkValidation.get)],
-  talkController.edit
-);
+router.patch("/:_id", [validate(talkValidation.get)], talkController.edit);
 
 router.delete(
   "/:_id",
@@ -23,11 +15,7 @@ router.delete(
   talkController.deleteTalk
 );
 
-router.get(
-  "/:_id",
-  [validate(talkValidation.get)],
-  talkController.listOne
-);
+router.get("/:id", talkController.listOne);
 
 router.get("/", talkController.list);
 

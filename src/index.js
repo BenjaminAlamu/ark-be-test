@@ -2,8 +2,8 @@ const express = require("express");
 const listAllRoutes = require("express-list-endpoints");
 const Table = require("cli-table");
 const app = express();
-const server = require('http').createServer();
-const io = require('socket.io')(server);
+const server = require("http").createServer(app);
+const chatService = require("./services/chat.service");
 
 require("dotenv").config();
 const port = process.env.PORT;
@@ -44,11 +44,19 @@ const table = new Table();
 table.push({ Endpoints: "Methods" }, ...routesList);
 logger.info(table.toString());
 
-io.on('connection', client => {
-  client.on('event', data => { /* … */ });
-  client.on('disconnect', () => { /* … */ });
+const io = require("socket.io")(server, {
+  cors: {
+    origin: [process.env.FRONTEND_APP_URL],
+  },
 });
 
-const appServer = app.listen(port, () => {
+io.on("connection", async (client) => {
+  client.on("send-message", async (data) => {
+    await chatService.createChat({ ...data });
+    client.broadcast.emit("new-chat", data);
+  });
+});
+
+const appServer = server.listen(port, () => {
   console.log(`Node Starter Project starts at port ${port}`);
 });

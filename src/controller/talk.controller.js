@@ -45,7 +45,7 @@ const list = catchAsync(async function (req, res) {
 
 const listOne = catchAsync(async function (req, res) {
   const talk = await talkService.findOne({
-    slug: req.params.slug,
+    _id: req.params.id,
     isDeleted: false,
   });
   if (!talk) {
@@ -76,5 +76,5 @@ module.exports = {
   edit,
   list,
   deleteTalk,
-  listOne
+  listOne,
 };
