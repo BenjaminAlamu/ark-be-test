@@ -30,6 +30,12 @@ var urlencodedParser = bodyParser.urlencoded({
 app.use(jsonParser);
 app.use(urlencodedParser);
 app.use("/api/v1", require("./routes/index"));
+app.get("*", (req, res) =>
+  res.status(200).send({
+    message:
+      "Welcome to ARK BE API. Please use the documentation here. https://documenter.getpostman.com/view/4530919/2s93RXrVrb",
+  })
+);
 // app.use(express.static(UPLOAD_PATH));
 app.use(errorConverter);
 app.use(errorHandler);
@@ -52,8 +58,8 @@ const io = require("socket.io")(server, {
 
 io.on("connection", async (client) => {
   client.on("send-message", async (data) => {
-    await chatService.createChat({ ...data });
-    client.broadcast.emit("new-chat", data);
+    const chat = await chatService.createChat({ ...data });
+    client.broadcast.emit(`new-chat-${data.talk}`, chat);
   });
 });
 
