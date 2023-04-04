@@ -1,5 +1,5 @@
 const catchAsync = require("../helpers/catchAsync");
-const { talkService } = require("../services");
+const { talkService, chatService } = require("../services");
 const ApiError = require("../helpers/ApiError");
 const pick = require("../helpers/pick");
 
@@ -48,6 +48,8 @@ const listOne = catchAsync(async function (req, res) {
     _id: req.params.id,
     isDeleted: false,
   });
+
+  const { chat } = await chatService.fetchAll({ talk: req.params.id });
   if (!talk) {
     throw new ApiError(404, "Talk not found");
   }
@@ -56,6 +58,7 @@ const listOne = catchAsync(async function (req, res) {
     message: "Talk fetched Successfully",
     data: {
       talk,
+      chat,
     },
   });
 });
@@ -66,7 +69,7 @@ const deleteTalk = catchAsync(async function (req, res) {
   res.status(200).send({
     message: "Item deleted successfully",
     data: {
-      talks,
+      talk,
     },
   });
 });

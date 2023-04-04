@@ -44,6 +44,7 @@ const fetchAll = async (criteria = {}, options = {}) => {
   let chat = await Chat.find(criteria)
     .sort(sort)
     .limit(_limit)
+    .populate("user", " firstName lastName")
     .skip(_limit * (_page - 1));
 
   return { chat, page: _page };

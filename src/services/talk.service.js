@@ -20,6 +20,7 @@ const createTalk = async (data) => {
     }
     const talk = await Talk.create({
       ...data,
+      image,
       slug: slugify(`${data.name}-${randomNumber(20)}`),
     });
     return JSON.parse(JSON.stringify(talk));
@@ -66,10 +67,16 @@ const count = async (criteria = {}) => {
 
 const updateTalk = async (talkId, data) => {
   let talk = await Talk.findById(talkId);
+  let image = data.image;
+  const isNewImage = !image.startsWith("https");
+  if (image && isNewImage) {
+    // A new image was uploaded
+    image = await cloudinaryHelper.uploadImage(data.image);
+  }
   if (!talk || talk.isDeleted) {
     throw new ApiError(404, "Talk not found");
   }
-  Object.assign(talk, data);
+  Object.assign(talk, { ...data, image });
   await talk.save();
   return talk;
 };
